@@ -1,5 +1,6 @@
 
 import bpy
+from bpy.app.handlers import persistent
 
 # Blender Addon: Export on Save
 
@@ -33,7 +34,7 @@ class AutoExportPanel(bpy.types.Panel):
 		if "gltf_filepath" in bpy.context.scene:
 			op.filepath = bpy.context.scene["gltf_filepath"]
 
-
+@persistent
 def export_handler(scene):
 	print("Saving...")
 	if "gltf_filepath" in bpy.context.scene:
@@ -43,9 +44,8 @@ def export_handler(scene):
 	else:
 		print("Export on Save: No saved filepath. Can't export")
 
-bpy.app.handlers.save_post.append(export_handler)
-
 def register():
+	bpy.app.handlers.save_post.append(export_handler)
 	bpy.utils.register_class(AutoExportPanel)
 	print("Export on Save")
 
