@@ -39,7 +39,6 @@ def export_handler(scene):
 	print("Saving...")
 	if "gltf_filepath" in bpy.context.scene:
 		print("Exporting GLB now..")
-		# Hopefully these are automatic?
 		settings = {}
 		if "glTF2ExportSettings" in bpy.context.scene:
 			settings = bpy.context.scene["glTF2ExportSettings"]
