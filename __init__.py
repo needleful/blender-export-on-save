@@ -40,9 +40,10 @@ def export_handler(scene):
 	if "gltf_filepath" in bpy.context.scene:
 		print("Exporting GLB now..")
 		# Hopefully these are automatic?
-		bpy.ops.export_scene.gltf(filepath=bpy.context.scene["gltf_filepath"])
-	else:
-		print("Export on Save: No saved filepath. Can't export")
+		settings = {}
+		if "glTF2ExportSettings" in bpy.context.scene:
+			settings = bpy.context.scene["glTF2ExportSettings"]
+		bpy.ops.export_scene.gltf(filepath=bpy.context.scene["gltf_filepath"], **settings)
 
 def register():
 	bpy.app.handlers.save_post.append(export_handler)
