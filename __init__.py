@@ -14,7 +14,9 @@ bl_info = {
 
 def export_path_callback(settings):
 	print("Export on Save: Exported to " + settings["gltf_filepath"])
-	bpy.context.scene["gltf_filepath"] = settings["gltf_filepath"]
+	save_path = settings["gltf_filepath"]
+	rel_path = bpy.path.relpath(save_path)
+	bpy.context.scene["gltf_relpath"] = rel_path
 
 glTF2_pre_export_callback = export_path_callback
 
@@ -31,18 +33,20 @@ class AutoExportPanel(bpy.types.Panel):
 		op.export_apply = True
 		op.use_active_collection = True
 		op.will_save_settings = True
-		if "gltf_filepath" in bpy.context.scene:
-			op.filepath = bpy.context.scene["gltf_filepath"]
+		if "gltf_relpath" in bpy.context.scene:
+			op.filepath = bpy.context.scene["gltf_relpath"]
 
 @persistent
 def export_handler(scene):
 	print("Saving...")
-	if "gltf_filepath" in bpy.context.scene:
+	if "gltf_relpath" in bpy.context.scene:
 		print("Exporting GLB now..")
 		settings = {}
 		if "glTF2ExportSettings" in bpy.context.scene:
 			settings = bpy.context.scene["glTF2ExportSettings"]
-		bpy.ops.export_scene.gltf(filepath=bpy.context.scene["gltf_filepath"], **settings)
+		abs_path = bpy.path.abspath(bpy.context.scene["gltf_relpath"])
+		print("Exporting to " + abs_path)
+		bpy.ops.export_scene.gltf(filepath=abs_path, **settings)
 
 def register():
 	bpy.app.handlers.save_post.append(export_handler)
